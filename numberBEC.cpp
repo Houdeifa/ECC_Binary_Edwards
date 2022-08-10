@@ -122,6 +122,22 @@ void numberBEC::calcPolyOrder(){
 
 }
 unsigned int numberBEC::getOrder(){
+	order = 0;
+	uint64_t mask = ((uint64_t) 1)<<63;
+	uint64_t orderi;
+	for(int i = (value.size()-1);i>=0;i--){
+		orderi = 64*(i+1);
+		int counter = 64;
+		while(mask > 0 && (value[i] & mask ) == 0){
+			mask>>=1;
+			orderi--;
+			counter--;
+		}
+		if(counter > 0){
+			order = orderi - 1;
+			return order;
+		}
+	}
 	return order;
 }
 void numberBEC::printPoly(){
@@ -293,6 +309,7 @@ void numberBEC::Normalize(){
 		if(value[i] != 0) break;
 		value.pop_back();
 	}
+	if(value.size() == 0) value.push_back(0);
 }
 numberBEC numberBEC::operator/(const numberBEC& B){
 
@@ -550,8 +567,8 @@ void numberBEC::inv(){
 		numberBEC R(*this);
 		numberBEC V;
 		numberBEC U(1);
-		std::cout<<"polyOrder = "<<polyOrder<<std::endl;
-		std::cout<<"poly = "<<S<<std::endl;
+//		std::cout<<"polyOrder = "<<polyOrder<<std::endl;
+//		std::cout<<"poly = "<<S<<std::endl;
 		int teta = 0;
 		for (int i = 0;i<(2*(polyOrder));i++){
 			if(!R.isBitSet(polyOrder)){

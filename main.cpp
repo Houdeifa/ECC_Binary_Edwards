@@ -12,6 +12,7 @@
 #include "coordinatesBEC.h"
 #include <cstdint>
 #include <vector>
+#include <chrono>
 
 
 int main() {
@@ -47,7 +48,6 @@ int main() {
 	R.calculate_normal_coords();
 	X = R.getX();
 	Y = R.getY();
-	std::cout<<"X et Y"<<std::endl;
 	std::cout<<"X "<<X<<std::endl;
 	std::cout<<"Y "<<Y<<std::endl;
 	x2 = X * X;
@@ -58,15 +58,18 @@ int main() {
 	std::cout<<"left = "<<left<<std::endl;
 	std::cout<<"right = "<<right<<std::endl;
 
-
-	R = 2 * A;
-	std::cout<<"A doubled"<<std::endl;
+	numberBEC N = "205bfeddf1b0b0fd7eb3345af71cc721790e83c4b88094e9a63f6d43";
+	auto start = std::chrono::high_resolution_clock::now();
+	R = A;
+	R *= N;
+	auto elapsed = std::chrono::high_resolution_clock::now() - start;
+	long long microseconds = std::chrono::duration_cast<std::chrono::milliseconds>(
+	        elapsed).count();
+	std::cout<<"time in ms = "<<microseconds<<"ms"<<std::endl;
+	std::cout<<"time in s = "<<microseconds/1000<<"s"<<std::endl;
 	R.calculate_normal_coords();
 	X = R.getX();
 	Y = R.getY();
-	std::cout<<"X et Y"<<std::endl;
-	std::cout<<"X "<<X<<std::endl;
-	std::cout<<"Y "<<Y<<std::endl;
 	x2 = X * X;
 	xy = X * Y;
 	y2 = Y * Y;

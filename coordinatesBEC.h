@@ -27,7 +27,10 @@ public:
 	coordinatesBEC(const numberBEC& X,const numberBEC& Y, const numberBEC& Z);
 	coordinatesBEC(const numberBEC& X,const numberBEC& Y,const numberBEC& Z,const numberBEC& D);
 	coordinatesBEC(const coordinatesBEC& N);
-
+	friend std::ostream& operator<<(std::ostream& os,const coordinatesBEC& n);
+	void  operator+=( coordinatesBEC& B);
+	void  operator*=( numberBEC& B);
+	void  operator*=( int B);
 	 friend coordinatesBEC operator+(coordinatesBEC& A, coordinatesBEC& B);
 	 friend coordinatesBEC operator*(int n,  const coordinatesBEC& B); //if n = 2 doubling otherwise => scalarMult
 	 friend coordinatesBEC operator*(const numberBEC& n,const  coordinatesBEC& B); //if n = 2 doubling otherwise => scalarMult

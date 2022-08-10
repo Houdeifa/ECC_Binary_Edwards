@@ -55,10 +55,10 @@ coordinatesBEC::coordinatesBEC(const numberBEC& X,const numberBEC& Y){
 	}
 }
 coordinatesBEC::coordinatesBEC(const coordinatesBEC& N){
-	x = N.x;
-	y = N.y;
-	z = N.z;
-	d = N.d;
+	x = numberBEC(N.x);
+	y = numberBEC(N.y);
+	z = numberBEC(N.z);
+	d = numberBEC(N.d);
 }
 coordinatesBEC::coordinatesBEC(const numberBEC& X,const numberBEC& Y,const numberBEC& Z){
 	x = numberBEC(X);
@@ -125,7 +125,6 @@ coordinatesBEC operator*(const numberBEC& N,const  coordinatesBEC& b){
 	if (n == 0) return coordinatesBEC();
 	if(n == 1) return coordinatesBEC(B);
 	else if(n == 2){
-		std::cout<<"here"<<std::endl;
 		numberBEC X1 = B.getX();
 		numberBEC Y1 = B.getY();
 		numberBEC Z1 = B.getZ();
@@ -149,20 +148,105 @@ coordinatesBEC operator*(const numberBEC& N,const  coordinatesBEC& b){
 		return Ret;
 	}else{
 		coordinatesBEC R0;
+		R0.setPoly(B.getX().getPoly());
+		R0.setD(B.getD());
 		coordinatesBEC R1(B);
-		int order = 0;
+		int order = n.getOrder();
 		for(int i = order;i>=0;i--){
 			if(n.isBitSet(i)){
-				R1 = R0 + R1;
-				R0 = 2*R0;
+				R1 += R0;
+				R0 *= 2;
 			}else{
-				R0 = R0 + R1;
-				R1 = 2*R0;
+				R0 += R1;
+				R1 *= 2;
 			}
 		}
 		coordinatesBEC Ret(R1);
 		return Ret;
 	}
+}
+void  coordinatesBEC::operator+=( coordinatesBEC& N2){
+	numberBEC X2( N2.getX());
+	numberBEC Y2( N2.getY());
+	numberBEC Z2( N2.getZ());
+	numberBEC W1 = x + y;
+	numberBEC W2 = X2 + Y2;
+	numberBEC A = x * (x + z);
+	numberBEC B = y * (y + z);
+	numberBEC C =  z *  Z2;
+	numberBEC D =  W2 * Z2;
+	numberBEC E =  d * (C*C);
+	numberBEC H = (d*Z2 + d*W2)*W1*C;
+	numberBEC I = d * C * z;
+	numberBEC U = E + A*D;
+	numberBEC V = E + B*D;
+	numberBEC S = U * V;
+	numberBEC X3 = S*y + (H + X2*(I + A * (Y2 + Z2))) * V * z;
+	y = S*x + (H + Y2*(I + B * (X2 + Z2))) * U * z;
+	x = X3;
+	z = S * z;
+}
+void  coordinatesBEC::operator*=( numberBEC& N){
+		numberBEC n(N);
+		if (n == 0) return;
+		if(n == 1) return;
+		else if(n == 2){
+			numberBEC A = x * x;
+			numberBEC B = A * A;
+			numberBEC C = y * y;
+			numberBEC D = C * C;
+			numberBEC E = z * z;
+			numberBEC F = d * (E * E);
+			numberBEC G = (B+D);
+			numberBEC H = A * E;
+			numberBEC I = C * E;
+			numberBEC J = H + I;
+			numberBEC K = G + d * J;
+			z = F + J + G;
+			x = K + H + D;
+			y = K + I + B;
+
+			return;
+		}else{
+			coordinatesBEC R0;
+			R0.setPoly(x.getPoly());
+			R0.setD(d);
+			int order = n.getOrder();
+			for(int i = order;i>=0;i--){
+				if(n.isBitSet(i)){
+					(*this) += R0;
+					R0 *= 2;
+				}else{
+					R0 += (*this);
+					(*this) *= 2;
+				}
+			}
+			return ;
+		}
+}
+void  coordinatesBEC::operator*=( int n){
+if(n != 2) return;
+numberBEC A = x * x;
+numberBEC B = A * A;
+numberBEC C = y * y;
+numberBEC D = C * C;
+numberBEC E = z * z;
+numberBEC F = d * (E * E);
+numberBEC G = (B+D);
+numberBEC H = A * E;
+numberBEC I = C * E;
+numberBEC J = H + I;
+numberBEC K = G + d * J;
+z = F + J + G;
+x = K + H + D;
+y = K + I + B;
+
+}
+std::ostream& operator<<(std::ostream& os,const coordinatesBEC& n){
+	os<<"getX() = "<<n.x<<std::endl;
+	os<<"getY() = "<<n.y<<std::endl;
+	os<<"getZ() = "<<n.z<<std::endl;
+	os<<"getD() = "<<n.d<<std::endl;
 }
 coordinatesBEC operator*(unsigned int n, coordinatesBEC& B){
 	 numberBEC k(n);
