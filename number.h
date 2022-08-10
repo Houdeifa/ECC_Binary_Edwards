@@ -6,8 +6,8 @@
 // Description : The basic class to represent a number and define GF(2^m) operations
 //============================================================================
 
-#ifndef HUMBER_H
-#define HUMBER_H
+#ifndef HUMBER_H_
+#define HUMBER_H_
 #include <cstdint>
 #include <iostream>
 
@@ -15,6 +15,7 @@ class number{
 	uint64_t value[2]; // array used to stock the data
 	uint64_t poly[2]; // array used to stock the irreducible polynomial
 	int polyOrder= 0; // number represent the order of the irreducible polynomial
+	unsigned int order = 0; // the order of the MSB
 	bool polynomeIsSet = false; // a boolean to tell if the irreducible polynomial is defined
 	void inv();
 public:
@@ -27,6 +28,7 @@ public:
 	number(int * v);
 	number(const char * s);
 	void printPoly();
+	int getOrder();
 	std::string getAsPoly();
 	std::string getIrrPoly();
 	number operator=(const int& n);
@@ -39,6 +41,12 @@ public:
 	number operator+(number& B);
 	number operator*(number& B);
 	number operator/(number& B);
+	bool  operator==(number &B);
+	friend bool operator==(int n,number &B);
+	bool  operator==(int n);
+	number operator+(const number& B);
+	number operator*(const number& B);
+	number operator/(const number& B);
 	void operator<<=(int i);
 	void operator>>=(int i);
 	void setPoly(const number& P);
@@ -48,5 +56,5 @@ public:
 	number operator>>(int i);
 
 };
-#endif
+#endif /* HUMBER_H_ */
 

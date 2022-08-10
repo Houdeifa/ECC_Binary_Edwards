@@ -8,44 +8,72 @@
 
 #include <iostream>
 #include "number.h"
+#include "numberBEC.h"
+#include "coordinatesBEC.h"
+#include <cstdint>
+#include <vector>
 
 
 int main() {
-//	int64_t v[2] = {0xAAAAAAAAAAAAAAAA,0xAAAAAAAAAAAAAAAA};
-	number A = "3F";
-	number B = "A3";
-	number Poly = "15F";
-	A.setPoly(Poly);
-	B.setPoly(Poly);
-	std::cout<<"Poly(x) = "<<A.getIrrPoly()<<std::endl;
-	std::cout<<"A(x) = "<<A.getAsPoly()<<std::endl;
-	std::cout<<"B(x) = "<<B.getAsPoly()<<std::endl;
-	number C = A * B;
-	std::cout<<"C = A x B = "<<C<<std::endl;
+	numberBEC P;
+	P.setFromPolyCoeffs(std::vector<uint64_t>({0,159,223}));
+	numberBEC D;
+	D.setFromPolyCoeffs(std::vector<uint64_t>({0,5,36,64}));
+	numberBEC X = "205bfedd71b0b0fdfeb3345af71cc721790e83c4b88094e9a63f6d43";
+	numberBEC Y = "205bfeddf1b0b0fd7eb3345af71cc721790e83c4b88094e9a63f6d43";
+	std::cout<<"P(x) = "<<P.getAsPoly()<<std::endl;
+	std::cout<<"X = "<<X<<std::endl;
+	std::cout<<"Y = "<<Y<<std::endl;
+	X.setPoly(P);
+	Y.setPoly(P);
+	D.setPoly(P);
+	numberBEC x2 = X * X;
+	numberBEC xy = X * Y;
+	numberBEC y2 = Y * Y;
+//	D.log = true;
+	numberBEC left = D*(X+Y+x2+y2);
+	numberBEC right = xy + xy*(X + Y) + x2*y2;
+	std::cout<<"left = "<<left<<std::endl;
+	std::cout<<"right = "<<right<<std::endl;
 
-	std::cout<<"C(x) = "<<C.getAsPoly()<<std::endl;
-	C = A >> 1;
-	std::cout<<"C = A >> 1 = "<<C<<std::endl;
-	A = "50";
-	A.setPoly(number("CB"));
-	A = 1/A;
-	std::cout<<"A^-1 = "<<A<<" = "<<A.getAsPoly()<<std::endl;
 
-	A.setPoly(number("CB"));
-	B.setPoly(number("CB"));
-	B = "50";
-	std::cout<<"A = "<<A<<std::endl;
-	std::cout<<"Poly(x) = "<<A.getIrrPoly()<<std::endl;
-	C = A * B;
-	std::cout<<"C = A^1 * B = "<<C<<" = "<<C.getAsPoly()<<std::endl;
-	A.setPoly(number("CB"));
-	B.setPoly(number("CB"));
-	std::cout<<"A = "<<A<<"& B = "<<B<<std::endl;
-	std::cout<<"Poly(x) = "<<A.getIrrPoly()<<std::endl;
-	C = A / B;
-	std::cout<<"C = A / B = "<<C<<std::endl;
-	C = 1 / B;
-	std::cout<<"C = 1 / B = "<<C<<std::endl;
+	coordinatesBEC A(X,Y,numberBEC(1),D);
+	A.setPoly(P);
+	coordinatesBEC R = A + A;
+	R.calculate_normal_coords();
+	coordinatesBEC B = R;
+	R  = B + A;
+	std::cout<<"A added"<<std::endl;
+	R.calculate_normal_coords();
+	X = R.getX();
+	Y = R.getY();
+	std::cout<<"X et Y"<<std::endl;
+	std::cout<<"X "<<X<<std::endl;
+	std::cout<<"Y "<<Y<<std::endl;
+	x2 = X * X;
+	xy = X * Y;
+	y2 = Y * Y;
+	left = D*(X+Y+x2+y2);
+	right = xy + xy*(X + Y) + x2*y2;
+	std::cout<<"left = "<<left<<std::endl;
+	std::cout<<"right = "<<right<<std::endl;
+
+
+	R = 2 * A;
+	std::cout<<"A doubled"<<std::endl;
+	R.calculate_normal_coords();
+	X = R.getX();
+	Y = R.getY();
+	std::cout<<"X et Y"<<std::endl;
+	std::cout<<"X "<<X<<std::endl;
+	std::cout<<"Y "<<Y<<std::endl;
+	x2 = X * X;
+	xy = X * Y;
+	y2 = Y * Y;
+	left = D*(X+Y+x2+y2);
+	right = xy + xy*(X + Y) + x2*y2;
+	std::cout<<"left = "<<left<<std::endl;
+	std::cout<<"right = "<<right<<std::endl;
 
 	return 0;
 }

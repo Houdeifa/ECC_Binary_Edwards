@@ -38,6 +38,7 @@ number::number(const std::string& s){
 	if(s.length() < 64 ) Len = s.length();
 
 	int64_t H = 0, L = 0, tmp = 0;
+	int j = Len-1;
 	for(int i = 0;i<Len;i++){
 		bool charUsed = false;
 		tmp<<=4;
@@ -53,11 +54,12 @@ number::number(const std::string& s){
 			tmp += (s[i] - 'A') + 10;
 			charUsed = true;
 		}
-		if(i == 15){
+		if(j == 16){
 			H = tmp;
 			tmp = 0;
 		}
 		if(!charUsed) return;
+		j--;
 	}
 	L = tmp;
 	value[0] = L;
@@ -121,6 +123,9 @@ number::number(const char * s){
 	poly[0] = 0;
 	poly[1] = 0;
 }
+int number::getOrder(){
+	return order;
+}
 /**
  * const int equal operator : copy the value from int to store it in least significant register
  * @param n is const int reference of number
@@ -170,7 +175,16 @@ number number::operator+(number& B) // otherwise, both parameters may be const r
 {
 	uint64_t v[2] = {B.value[0]^value[0],B.value[1]^value[1]};
 	number A(v);
+	A.poly[0] = poly[0];
+	A.poly[1] = poly[1];
+	A.polyOrder= polyOrder;
+	A.polynomeIsSet = polynomeIsSet;
 	return A;
+}
+number number::operator+(const number& B) // otherwise, both parameters may be const references
+{
+	number A(B);
+	return this->operator+(A);
 }
 /**
  * verify if the n'th bit is set
@@ -256,7 +270,16 @@ number number::operator*(number& B)
 			C = C + PolyN;
 		}
 	}
+	A.poly[0] = poly[0];
+	A.poly[1] = poly[1];
+	A.polyOrder= polyOrder;
+	A.polynomeIsSet = polynomeIsSet;
 	return A;
+}
+number number::operator*(const number& B)
+{
+ number A(B);
+ return this->operator*(A);
 }
 /**
  * inversion in GF(2^m) of this number, the value of this number will be modified once this function is called,
@@ -394,7 +417,23 @@ number number::operator/(number& B) // otherwise, both parameters may be const r
 	number C(B);
 	C.inv();
 	number  A = (*this) * C;
-	return A; // return the result by value (uses move constructor)
+	return A;
+}
+number number::operator/(const number& B) // otherwise, both parameters may be const references
+{
+	number C(B);
+	return this->operator/(C);
+}
+bool number::operator==(number& B)
+{
+	return ((this->value[0] == B.value[0]) && (this->value[1] == B.value[1])); // return the result by value (uses move constructor)
+}
+bool number::operator==(int i)
+{
+	return ((this->value[0] == i) && (this->value[1] == 0));
+}
+bool operator==(int n,number &B){
+	return B.operator==(n);
 }
 /**
  * Division in GF(2^m) field between this a int number and a number B,
