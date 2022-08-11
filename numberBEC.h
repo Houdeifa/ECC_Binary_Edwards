@@ -12,6 +12,13 @@
 #include <vector>
 
 class numberBEC {
+	static int constructed0;
+	static int constructed1;
+	static int constructed2;
+	static int constructed3;
+	static int constructed4;
+	static int constructed5;
+	static int destructed;
 	std::vector<uint64_t> value; // vector used to stock the data
 	std::vector<uint64_t> poly; // vector used to stock the irreducible polynomial
 	int order = 0; // the order of the MSB
@@ -21,6 +28,8 @@ public:
 	bool log = false;
 	void inv();
 	void Normalize();
+	static void print_const_and_dust();
+	static void reset_const_and_dust();
 	numberBEC();
 	numberBEC(const numberBEC& A);
 	numberBEC(int v);

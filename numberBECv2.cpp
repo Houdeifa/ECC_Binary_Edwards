@@ -1,47 +1,49 @@
 /*
- * numberBEC.cpp
+ * numberBECv2.cpp
  *
  *  Created on: 4 août 2022
  *      Author: a858370
  */
 
-#include "numberBEC.h"
+#include "numberBECv2.h"
 
-numberBEC::numberBEC(const std::vector<uint64_t>& v){
-	numberBEC::constructed4++;
+numberBECv2::numberBECv2(const std::vector<uint64_t>& v){
+	numberBECv2::constructed4++;
 	copyValueFromVector(v);
 }
-numberBEC::numberBEC() {
-	numberBEC::constructed0++;
+numberBECv2::numberBECv2() {
+	numberBECv2::constructed0++;
 	value.push_back(0);
 	poly.push_back(0);
 
 }
-int numberBEC::constructed0 = 0;
-int numberBEC::constructed1 = 0;
-int numberBEC::constructed2 = 0;
-int numberBEC::constructed3 = 0;
-int numberBEC::constructed4 = 0;
-int numberBEC::constructed5 = 0;
-int numberBEC::destructed = 0;
-void numberBEC::reset_const_and_dust(){
-	numberBEC::constructed0 = 0;
-	numberBEC::constructed1 = 0;
-	numberBEC::constructed2 = 0;
-	numberBEC::constructed3 = 0;
-	numberBEC::constructed4 = 0;
-	numberBEC::constructed5 = 0;
-	numberBEC::destructed = 0;
+int numberBECv2::constructed0 = 0;
+int numberBECv2::constructed1 = 0;
+int numberBECv2::constructed2 = 0;
+int numberBECv2::constructed3 = 0;
+int numberBECv2::constructed4 = 0;
+int numberBECv2::constructed5 = 0;
+int numberBECv2::destructed = 0;
+int numberBECv2::polyOrder= 0;
+bool numberBECv2::polynomeIsSet = false;
+unsigned int numberBECv2::polyI = 0;
+unsigned int numberBECv2::polyJ = 0;
+std::vector<uint64_t> numberBECv2::poly;
+void numberBECv2::reset_const_and_dust(){
+	numberBECv2::constructed0 = 0;
+	numberBECv2::constructed1 = 0;
+	numberBECv2::constructed2 = 0;
+	numberBECv2::constructed3 = 0;
+	numberBECv2::constructed4 = 0;
+	numberBECv2::constructed5 = 0;
+	numberBECv2::destructed = 0;
 }
-numberBEC::numberBEC(const numberBEC& A){
-	numberBEC::constructed1++;
-	this->copyValueFromVector(A.value);
-	this->copyPolyFromVector(A.poly);
-	this->calcPolyOrder();
-	if(polyOrder > 0) this->polynomeIsSet = true;
+numberBECv2::numberBECv2(const numberBECv2& A){
+	numberBECv2::constructed1++;
+	copyValueFromVector(A.value);
 }
-numberBEC::numberBEC(int v){
-	numberBEC::constructed2++;
+numberBECv2::numberBECv2(int v){
+	numberBECv2::constructed2++;
 	value.push_back(v);
 
 	uint64_t mask = ((uint64_t) 1)<<63;
@@ -51,28 +53,25 @@ numberBEC::numberBEC(int v){
 		mask>>=1;
 		order--;
 	}
-	poly.push_back(0);
-	polyOrder = 0;
-	polynomeIsSet = false;
 
 }
 
-void numberBEC::print_const_and_dust(){
-	std::cout<<"numberBEC::constructed0 = "<<numberBEC::constructed0<<std::endl;
-	std::cout<<"numberBEC::constructed1 = "<<numberBEC::constructed1<<std::endl;
-	std::cout<<"numberBEC::constructed2 = "<<numberBEC::constructed2<<std::endl;
-	std::cout<<"numberBEC::constructed3 = "<<numberBEC::constructed3<<std::endl;
-	std::cout<<"numberBEC::constructed4 = "<<numberBEC::constructed4<<std::endl;
-	std::cout<<"numberBEC::constructed5 = "<<numberBEC::constructed5<<std::endl;
-	std::cout<<"numberBEC::destructed = "<<numberBEC::destructed<<std::endl;
+void numberBECv2::print_const_and_dust(){
+	std::cout<<"numberBECv2::constructed0 = "<<numberBECv2::constructed0<<std::endl;
+	std::cout<<"numberBECv2::constructed1 = "<<numberBECv2::constructed1<<std::endl;
+	std::cout<<"numberBECv2::constructed2 = "<<numberBECv2::constructed2<<std::endl;
+	std::cout<<"numberBECv2::constructed3 = "<<numberBECv2::constructed3<<std::endl;
+	std::cout<<"numberBECv2::constructed4 = "<<numberBECv2::constructed4<<std::endl;
+	std::cout<<"numberBECv2::constructed5 = "<<numberBECv2::constructed5<<std::endl;
+	std::cout<<"numberBECv2::destructed = "<<numberBECv2::destructed<<std::endl;
 }
-numberBEC::numberBEC(const char * s){
-	numberBEC::constructed5++;
+numberBECv2::numberBECv2(const char * s){
+	numberBECv2::constructed5++;
 	std::string str = std::string(s);
 	copyFromString(str);
 }
 
-void numberBEC::copyFromString(const std::string& s){
+void numberBECv2::copyFromString(const std::string& s){
 	if(s.length() == 0){
 		value.push_back(0);
 		order = 0;
@@ -112,9 +111,9 @@ void numberBEC::copyFromString(const std::string& s){
 		value[j] = tmp;
 	}
 }
-numberBEC::numberBEC(const std::string& s){
+numberBECv2::numberBECv2(const std::string& s){
 
-	numberBEC::constructed3++;
+	numberBECv2::constructed3++;
 	copyFromString(s);
 
 //	for(int i = 0;i<value.size();i++){
@@ -122,38 +121,38 @@ numberBEC::numberBEC(const std::string& s){
 //	}
 
 }
-void numberBEC::copyValueFromVector(const std::vector<uint64_t>& vec){
+void numberBECv2::copyValueFromVector(const std::vector<uint64_t>& vec){
 	value.clear();
 	for(int i = 0;i<vec.size();i++){
 		value.push_back(vec[i]);
 	}
 
 }
-unsigned int numberBEC::getPolyOrder(){
-	return polyOrder;
+unsigned int numberBECv2::getPolyOrder(){
+	return numberBECv2::polyOrder;
 }
-void numberBEC::calcPolyOrder(){
+void numberBECv2::calcPolyOrder(){
 
 	uint64_t mask = ((uint64_t) 1)<<63;
 	uint64_t orderi;
-	for(int i = (poly.size()-1);i>=0;i--){
+	for(int i = (numberBECv2::poly.size()-1);i>=0;i--){
 		orderi = 64*(i+1);
 		int counter = 64;
-		while(mask > 0 && (poly[i] & mask ) == 0){
+		while(mask > 0 && (numberBECv2::poly[i] & mask ) == 0){
 			mask>>=1;
 			orderi--;
 			counter--;
 		}
 		if(counter > 0){
-			polyOrder = orderi - 1;
-			polynomeIsSet = true;
+			numberBECv2::polyOrder = orderi - 1;
+			numberBECv2::polynomeIsSet = true;
 			break;
 		}
 	}
 //	std::cout<<"polyOrder = "<<polyOrder<<std::endl;
 
 }
-unsigned int numberBEC::getOrder(){
+unsigned int numberBECv2::getOrder(){
 	order = 0;
 	uint64_t mask = ((uint64_t) 1)<<63;
 	uint64_t orderi;
@@ -172,11 +171,11 @@ unsigned int numberBEC::getOrder(){
 	}
 	return order;
 }
-void numberBEC::printPoly(){
+void numberBECv2::printPoly(){
 	std::string s = this->getAsPoly();
 	std::cout<<s<<std::endl;
 }
-void numberBEC::setFromPolyCoeffs(const std::vector<uint64_t>& v){
+void numberBECv2::setFromPolyCoeffs(const std::vector<uint64_t>& v){
 	value.clear();
 	uint64_t tmp = 0;
 	for(int i = 0;i<v.size();i++){
@@ -205,13 +204,13 @@ void numberBEC::setFromPolyCoeffs(const std::vector<uint64_t>& v){
 	}
 
 }
-numberBEC numberBEC::getPoly(){
-	return numberBEC(poly);
+numberBECv2 numberBECv2::getPoly(){
+	return numberBECv2(numberBECv2::poly);
 }
-bool numberBEC::isPolySet(){
-	return polynomeIsSet;
+bool numberBECv2::isPolySet(){
+	return numberBECv2::polynomeIsSet;
 }
-std::ostream& operator<<(std::ostream& os,const  numberBEC& n)
+std::ostream& operator<<(std::ostream& os,const  numberBECv2& n)
 {
 	os  << std::hex<<"0x";
 
@@ -222,16 +221,11 @@ std::ostream& operator<<(std::ostream& os,const  numberBEC& n)
 	os<<std::dec;
 	return os;
 }
-numberBEC numberBEC::operator+(const numberBEC& B){
-	numberBEC C;
-	numberBEC b(B);
-	numberBEC * Small,* Big;
+numberBECv2 numberBECv2::operator+(const numberBECv2& B){
+	numberBECv2 C;
+	numberBECv2 b(B);
+	numberBECv2 * Small,* Big;
 	C.value.clear();
-	C.poly.clear();
-	int i = 0;
-	for(i = 0;i<this->poly.size();i++){
-		C.poly.push_back(poly[i]);
-	}
 	if(value.size() < B.value.size()){
 		Small = this;
 		Big = &b;
@@ -241,54 +235,47 @@ numberBEC numberBEC::operator+(const numberBEC& B){
 
 	}
 
+	int i = 0;
 	for(i = 0;i <Small->value.size();i++){
 		C.value.push_back(Small->value[i] ^ Big->value[i]);
 	}
 	for(;i<Big->value.size();i++){
 		C.value.push_back(Big->value[i]);
 	}
-	C.calcPolyOrder();
 	C.Normalize();
 	return C;
 }
-void numberBEC::addPoly(){
+void numberBECv2::addPoly(){
 	int i = 0;
 	int Small,Big;
-	if(poly.size() < size()){
-		Small = poly.size();
+	if(numberBECv2::poly.size() < size()){
+		Small = numberBECv2::poly.size();
 		Big = size();
 	}else{
-		Big = poly.size();
+		Big = numberBECv2::poly.size();
 		Small = size();
 
 	}
 
 	for(i = 0;i <Small;i++){
-		value[i] ^= poly[i];
+		value[i] ^= numberBECv2::poly[i];
 	}
 	if(Big == value.size()) return;
 	for(;i<Big;i++){
-		value.push_back(poly[i]);
+		value.push_back(numberBECv2::poly[i]);
 	}
 	Normalize();
 }
-numberBEC numberBEC::operator*(const numberBEC& B){
-	numberBEC C(*this);
-	if(polynomeIsSet == false || polyOrder == 0) return C;
-	numberBEC PolyN(this->poly);
-	numberBEC A;
+numberBECv2 numberBECv2::operator*(const numberBECv2& B){
+	numberBECv2 C(*this);
+	if(numberBECv2::polynomeIsSet == false || numberBECv2::polyOrder == 0) return C;
+	numberBECv2 PolyN(numberBECv2::poly);
+	numberBECv2 A;
 	int counter = 0;
-//	if(log){
-//		std::cout<<"polyOrder = "<<polyOrder<<std::endl;
-//		std::cout<<"polyOrder = "<<getIrrPoly()<<std::endl;
-//		std::cout<<"PolyN = "<<PolyN.getAsPoly()<<std::endl;
-//	}
 
 //	std::cout<<"this = "<<(*this)<<std::endl;
 //	std::cout<<"B = "<<B<<std::endl;
 	uint64_t mask = 1;
-	int polyI = polyOrder / 64;
-	int polyJ = polyOrder % 64;
 	uint64_t polyMask = (((int64_t) 1)<<polyJ);
 	for(int j = 0;j < B.value.size();j++){
 		mask = 1;
@@ -314,7 +301,7 @@ numberBEC numberBEC::operator*(const numberBEC& B){
 //				std::cout<<"polyMask = "<<polyMask<<std::endl;
 //				std::cout<<"C.value[polyI] = "<<C.value[polyI]<<std::endl;
 //			}
-			if(C.value.size() > polyI && (C.value[polyI] & polyMask) != 0){
+			if(C.value.size() > numberBECv2::polyI && (C.value[numberBECv2::polyI] & polyMask) != 0){
 //				if(counter < 3){
 //					counter++;
 //				if(log)
@@ -329,41 +316,34 @@ numberBEC numberBEC::operator*(const numberBEC& B){
 //			}
 		}
 	}
-//	std::cout<<"A 0 = "<<A<<std::endl;
-	A.setPoly(PolyN);
-//	std::cout<<"A 1 = "<<A<<std::endl;
 	A.Normalize();
-//	std::cout<<"A 1 = "<<A<<std::endl;
 	return A;
 }
-void numberBEC::Normalize(){
+void numberBECv2::Normalize(){
 	for(int i = (value.size()-1);i>=0;i--){
 		if(value[i] != 0) break;
 		value.pop_back();
 	}
 	if(value.size() == 0) value.push_back(0);
 }
-numberBEC numberBEC::operator/(const numberBEC& B){
+numberBECv2 numberBECv2::operator/(const numberBECv2& B){
 
-	numberBEC C(B);
+	numberBECv2 C(B);
 	C.inv();
-	C.calcPolyOrder();
-	calcPolyOrder();
 //	std::cout<<"C = "<<C<<std::endl;
 //	std::cout<<"(*this) = "<<(*this)<<std::endl;
-	numberBEC  A = (*this) * C;
+	numberBECv2  A = (*this) * C;
 	return A;
 }
-numberBEC operator/(int n,const numberBEC& B){
-	numberBEC R;
+numberBECv2 operator/(int n,const numberBECv2& B){
+	numberBECv2 R;
 	if(n != 1)
 		return R;
-	R = numberBEC(B);
-	R.calcPolyOrder();
+	R = numberBECv2(B);
 	R.inv();
 	return R;
 }
-void numberBEC::operator+=(const numberBEC& B){
+void numberBECv2::operator+=(const numberBECv2& B){
 	int Small,Big;
 	if(value.size() < B.value.size()){
 		Small = value.size();
@@ -382,13 +362,13 @@ void numberBEC::operator+=(const numberBEC& B){
 	}
 
 }
-bool numberBEC::isBitSet(int n){
+bool numberBECv2::isBitSet(int n){
 	int i = n / 64;
 	int j = n % 64;
 	return i < value.size() && (value[i] & (int64_t) 1<<j) != 0;
 }
-numberBEC numberBEC::operator<<(int nBits){
-		numberBEC A;
+numberBECv2 numberBECv2::operator<<(int nBits){
+		numberBECv2 A;
 		A.value.clear();
 		for(int i = 0;i<this->value.size();i++){
 			A.value.push_back(this->value[i]<<nBits);
@@ -399,8 +379,8 @@ numberBEC numberBEC::operator<<(int nBits){
 		A.value.push_back((this->value[A.value.size()-1] >> (64-nBits)) &  (((uint64_t) 1<<nBits) - 1));
 		return A;
 }
-numberBEC numberBEC::operator>>(int nBits){
-	numberBEC A;
+numberBECv2 numberBECv2::operator>>(int nBits){
+	numberBECv2 A;
 	A.value.clear();
 	for(int i = 0;i<this->value.size();i++){
 		A.value.push_back(value[i]>>nBits);
@@ -414,15 +394,15 @@ numberBEC numberBEC::operator>>(int nBits){
 	return A;
 
 }
-uint64_t numberBEC::operator[](int i){
+uint64_t numberBECv2::operator[](int i){
 	return value[i];
 }
-unsigned int numberBEC::size(){
+unsigned int numberBECv2::size(){
 	return value.size();
 }
 
 
-void numberBEC::operator<<=(int nBits){
+void numberBECv2::operator<<=(int nBits){
 	std::vector<uint64_t> save;
 	for(int i = 0;i<this->value.size();i++){
 		save.push_back(this->value[i]<<nBits);
@@ -435,7 +415,7 @@ void numberBEC::operator<<=(int nBits){
 	value.swap(save);
 
 }
-void numberBEC::operator>>=(int nBits){
+void numberBECv2::operator>>=(int nBits){
 		std::vector<uint64_t> save;
 		for(int i = 0;i<this->value.size();i++){
 			save.push_back(value[i]>>nBits);
@@ -445,23 +425,17 @@ void numberBEC::operator>>=(int nBits){
 		}
 		value.swap(save);
 }
-numberBEC numberBEC::operator=(const numberBEC& A){
+numberBECv2 numberBECv2::operator=(const numberBECv2& A){
 
 	this->copyValueFromVector(A.value);
-	this->copyPolyFromVector(A.poly);
-	this->calcPolyOrder();
 	return (*this);
 }
-numberBEC numberBEC::operator&(const numberBEC& B){
-	numberBEC C;
-	numberBEC b(B);
-	numberBEC * Small,* Big;
-	C.value.clear();
-	C.poly.clear();
+numberBECv2 numberBECv2::operator&(const numberBECv2& B){
+	numberBECv2 C;
+	numberBECv2 b(B);
+	numberBECv2 * Small,* Big;
+	value.clear();
 	int i = 0;
-	for(i = 0;i<this->poly.size();i++){
-		C.value.push_back(this->value[i]);
-	}
 	if(this->value.size() < B.value.size()){
 		Small = this;
 		Big = &b;
@@ -479,38 +453,19 @@ numberBEC numberBEC::operator&(const numberBEC& B){
 	}
 	return C;
 }
-numberBEC::~numberBEC() {
-	numberBEC::destructed++;
+numberBECv2::~numberBECv2() {
+	numberBECv2::destructed++;
 	// TODO Auto-generated destructor stub
 }
-void numberBEC::setPoly(const numberBEC& P){
-	poly.clear();
-	this->copyPolyFromVector(P.value);
-	int ValueIndex = 0;
-	for(int i = (poly.size() - 1);i>=0;i--){
-		if(poly[i] != 0){
-			polynomeIsSet = true;
-			ValueIndex = i;
-			uint64_t mask = (uint64_t)1 << 63;
-			for(int j = 0;j<64;j++){
-				if((poly[i] & mask) != 0){
-					polynomeIsSet = true;
-					polyOrder = 63-j;
-					break;
-				}
-				mask>>=1;
-			}
-			break;
-
-		}
-	}
-	if(polynomeIsSet){
-		polyOrder += 64*ValueIndex;
-	}
+void numberBECv2::setPoly(const numberBECv2& P){
+	copyPolyFromVector(P.value);
+	calcPolyOrder();
+	numberBECv2::polyI = numberBECv2::polyOrder / 64;
+	numberBECv2::polyJ = numberBECv2::polyOrder % 64;
 
 }
 
-std::string numberBEC::getAsPoly(){
+std::string numberBECv2::getAsPoly(){
 	std::string s = "";
 	bool isSet = false;
 
@@ -541,75 +496,75 @@ std::string numberBEC::getAsPoly(){
 	return s;
 
 }
-void numberBEC::clearAllDatas(){
+void numberBECv2::clearAllDatas(){
 	value.clear();
 	order = 0;
 	this->clearPoly();
 
 }
-numberBEC numberBEC::operator=(const char * s){
-	numberBEC A(s);
+numberBECv2 numberBECv2::operator=(const char * s){
+	numberBECv2 A(s);
 	(*this) = A;
 }
-numberBEC numberBEC::operator=(const int& n){
+numberBECv2 numberBECv2::operator=(const int& n){
 	value.clear();
 	value.push_back(n);
 	return (*this);
 }
-void numberBEC::copyPolyFromVector(const std::vector<uint64_t>& vec){
-	poly.clear();
+void numberBECv2::copyPolyFromVector(const std::vector<uint64_t>& vec){
+	numberBECv2::poly.clear();
 	for(int i = 0;i<vec.size();i++){
-		poly.push_back(vec[i]);
+		numberBECv2::poly.push_back(vec[i]);
 	}
 
 }
-std::string numberBEC::getIrrPoly(){
-	numberBEC K(this->poly);
+std::string numberBECv2::getIrrPoly(){
+	numberBECv2 K(numberBECv2::poly);
 	return K.getAsPoly();
 
 }
-void numberBEC::clearPoly(){
-	polyOrder = 0;
-	poly.clear();
-	polynomeIsSet = false;
+void numberBECv2::clearPoly(){
+	numberBECv2::polyOrder = 0;
+	numberBECv2::poly.clear();
+	numberBECv2::polynomeIsSet = false;
 
 }
 
-bool  numberBEC::operator==(const numberBEC &B){
+bool  numberBECv2::operator==(const numberBECv2 &B){
 	if(value.size() != B.value.size()) return false;
 	for(int i = 0;i<this->value.size();i++){
 		if(value[i] != B.value[i]) return false;
 	}
 	return true;
 }
-bool operator==(int n,const numberBEC &B){
-	numberBEC N(n);
+bool operator==(int n,const numberBECv2 &B){
+	numberBECv2 N(n);
 	return N == B;
 }
-bool operator==(const numberBEC &B, int n){
-	numberBEC N(n);
+bool operator==(const numberBECv2 &B, int n){
+	numberBECv2 N(n);
 	return N == B;
 }
-bool  numberBEC::operator==(int n){
-	numberBEC N(n);
+bool  numberBECv2::operator==(int n){
+	numberBECv2 N(n);
 	return (*this) == N;
 
 }
-void numberBEC::inv(){
-		numberBEC S(poly);
-		numberBEC R(*this);
-		numberBEC V;
-		numberBEC U(1);
+void numberBECv2::inv(){
+		numberBECv2 S(numberBECv2::poly);
+		numberBECv2 R(*this);
+		numberBECv2 V;
+		numberBECv2 U(1);
 //		std::cout<<"polyOrder = "<<polyOrder<<std::endl;
 //		std::cout<<"poly = "<<S<<std::endl;
 		int teta = 0;
-		for (int i = 0;i<(2*(polyOrder));i++){
-			if(!R.isBitSet(polyOrder)){
+		for (int i = 0;i<(2*(numberBECv2::polyOrder));i++){
+			if(!R.isBitSet(numberBECv2::polyOrder)){
 				R <<=1;
 				U <<=1;
 				teta++;
 			}else{
-				if(S.isBitSet(polyOrder)){
+				if(S.isBitSet(numberBECv2::polyOrder)){
 					S += R;
 					V += U;
 				}
@@ -617,7 +572,7 @@ void numberBEC::inv(){
 				if(teta == 0){
 					S.swap(R);
 
-					numberBEC tmp = V <<1;
+					numberBECv2 tmp = V <<1;
 					U.swap(tmp);
 					V = tmp;
 					teta = 1;
@@ -628,19 +583,9 @@ void numberBEC::inv(){
 			}
 
 		}
-		U.setPoly(numberBEC(poly));
 		(*this) = U;
-		this->calcPolyOrder();
 		this->Normalize();
 }
-void numberBEC::swap(numberBEC& n){
+void numberBECv2::swap(numberBECv2& n){
 	value.swap(n.value);
-	poly.swap(n.poly);
-	int tmp = this->polyOrder;
-	bool tmpb = this->polynomeIsSet;
-	polyOrder = n.polyOrder;
-	n.polyOrder = tmp;
-
-	polynomeIsSet = n.polynomeIsSet;
-	n.polynomeIsSet = tmpb;
 }

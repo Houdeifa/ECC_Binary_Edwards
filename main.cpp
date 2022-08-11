@@ -8,7 +8,7 @@
 
 #include <iostream>
 #include "number.h"
-#include "numberBEC.h"
+#include "numberBECv2.h"
 #include "coordinatesBEC.h"
 #include <cstdint>
 #include <vector>
@@ -16,30 +16,29 @@
 
 
 int main() {
-	numberBEC P;
+	numberBECv2 P;
 	P.setFromPolyCoeffs(std::vector<uint64_t>({0,159,223}));
-	numberBEC D;
+	numberBECv2 D;
 	D.setFromPolyCoeffs(std::vector<uint64_t>({0,5,36,64}));
-	numberBEC X = "205bfedd71b0b0fdfeb3345af71cc721790e83c4b88094e9a63f6d43";
-	numberBEC Y = "205bfeddf1b0b0fd7eb3345af71cc721790e83c4b88094e9a63f6d43";
+	numberBECv2 X = "205bfedd71b0b0fdfeb3345af71cc721790e83c4b88094e9a63f6d43";
+	numberBECv2 Y = "205bfeddf1b0b0fd7eb3345af71cc721790e83c4b88094e9a63f6d43";
+	numberBECv2::setPoly(P);
 	std::cout<<"P(x) = "<<P.getAsPoly()<<std::endl;
 	std::cout<<"X = "<<X<<std::endl;
 	std::cout<<"Y = "<<Y<<std::endl;
-	X.setPoly(P);
-	Y.setPoly(P);
-	D.setPoly(P);
-	numberBEC x2 = X * X;
-	numberBEC xy = X * Y;
-	numberBEC y2 = Y * Y;
+	std::cout<<"P(x) = "<<numberBECv2::getIrrPoly()<<std::endl;
+	numberBECv2 x2 = X * X;
+	numberBECv2 xy = X * Y;
+	numberBECv2 y2 = Y * Y;
 //	D.log = true;
-	numberBEC left = D*(X+Y+x2+y2);
-	numberBEC right = xy + xy*(X + Y) + x2*y2;
+	numberBECv2 left = D*(X+Y+x2+y2);
+	numberBECv2 right = xy + xy*(X + Y) + x2*y2;
 	std::cout<<"left = "<<left<<std::endl;
 	std::cout<<"right = "<<right<<std::endl;
 
 
-	coordinatesBEC A(X,Y,numberBEC(1),D);
-	A.setPoly(P);
+	coordinatesBEC A(X,Y,numberBECv2(1),D);
+	std::cout<<"polyOrder = "<<numberBECv2::getPolyOrder()<<std::endl;
 	coordinatesBEC R = A + A;
 	R.calculate_normal_coords();
 	coordinatesBEC B = R;
@@ -50,17 +49,20 @@ int main() {
 	Y = R.getY();
 	std::cout<<"X "<<X<<std::endl;
 	std::cout<<"Y "<<Y<<std::endl;
+	X.log = true;
 	x2 = X * X;
 	xy = X * Y;
 	y2 = Y * Y;
+	std::cout<<"X2 "<<x2<<std::endl;
+	std::cout<<"Y2 "<<y2<<std::endl;
 	left = D*(X+Y+x2+y2);
 	right = xy + xy*(X + Y) + x2*y2;
 	std::cout<<"left = "<<left<<std::endl;
 	std::cout<<"right = "<<right<<std::endl;
 
-	numberBEC N = "205bfeddf1b0b0fd7eb3345af71cc721790e83c4b88094e9a63f6d43";
-	auto start = std::chrono::high_resolution_clock::now();
+	numberBECv2 N = "205bfeddf1b0b0fd7eb3345af71cc721790e83c4b88094e9a63f6d43";
 	R = A;
+	auto start = std::chrono::high_resolution_clock::now();
 	R *= N;
 	auto elapsed = std::chrono::high_resolution_clock::now() - start;
 	long long microseconds = std::chrono::duration_cast<std::chrono::milliseconds>(
@@ -77,6 +79,6 @@ int main() {
 	right = xy + xy*(X + Y) + x2*y2;
 	std::cout<<"left = "<<left<<std::endl;
 	std::cout<<"right = "<<right<<std::endl;
-
+	numberBECv2::print_const_and_dust();
 	return 0;
 }
